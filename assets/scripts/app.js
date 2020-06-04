@@ -1,46 +1,78 @@
 let curResult = 0;
+let logEntries = [];
 
-function getUserInputNumber(){
-    return parseInt(userInput.value);
+function getUserInputNumber() {
+  return parseInt(userInput.value);
 }
 
-function generateDescription(operation, inputNumber){
-    return `${curResult} ${operation} ${inputNumber}`
+function generateDescription(prevResult, operation, inputNumber) {
+  return `${prevResult} ${operation} ${inputNumber}`;
 }
 
-function add(){
-    const inputNumber = getUserInputNumber();
-    const description = generateDescription('+', inputNumber);
-    curResult += inputNumber; 
-    outputResult(curResult, description);
+function generateLogs(operation, result) {
+  let logEntry = {
+    operation: operation,
+    result: result,
+  };
+  logEntries.push(logEntry);
+  console.log(logEntries);
 }
 
-function subtract(){
-    const inputNumber = getUserInputNumber();
-    const description = generateDescription('-', inputNumber);
-    curResult -= inputNumber; 
-    outputResult(curResult, description);
+function calculateResult(calculationType) {
+  const inputNumber = getUserInputNumber();
+  if (
+    (calculationType !== "ADD" &&
+      calculationType !== "SUB" &&
+      calculationType !== "MUL" &&
+      calculationType !== "DIV") ||
+    !inputNumber
+  )
+    return;
+
+  let mathOperator;
+  const prevResult = curResult;
+  if (calculationType === "ADD") {
+    curResult += inputNumber;
+    mathOperator = "+";
+  } else if (calculationType === "SUB") {
+    curResult -= inputNumber;
+    mathOperator = "-";
+  } else if (calculationType === "MUL") {
+    curResult *= inputNumber;
+    mathOperator = "*";
+  } else {
+    curResult /= inputNumber;
+    mathOperator = "/";
+  }
+  const description = generateDescription(
+    prevResult,
+    mathOperator,
+    inputNumber
+  );
+  outputResult(curResult, description);
+  generateLogs(calculationType, curResult);
 }
 
-function multiply(){
-    const inputNumber = getUserInputNumber();
-    const description = generateDescription('*', inputNumber);
-    curResult *= inputNumber; 
-    outputResult(curResult, description);
+function add() {
+  calculateResult("ADD");
 }
 
-function divide(){
-    const inputNumber = getUserInputNumber();
-    const description = generateDescription('/', inputNumber);
-    curResult /= inputNumber; 
-    outputResult(curResult, description);
+function subtract() {
+  calculateResult("SUB");
 }
 
-addBtn.addEventListener('click', add);
+function multiply() {
+  calculateResult("MUL");
+}
 
-subtractBtn.addEventListener('click', subtract);
+function divide() {
+  calculateResult("DIV");
+}
 
-multiplyBtn.addEventListener('click', multiply);
+addBtn.addEventListener("click", add);
 
-divideBtn.addEventListener('click', divide);
+subtractBtn.addEventListener("click", subtract);
 
+multiplyBtn.addEventListener("click", multiply);
+
+divideBtn.addEventListener("click", divide);
